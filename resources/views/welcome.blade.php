@@ -37,9 +37,18 @@
     </head>
     <body>
         <div class="container">
-            <div class="content">
+            {{-- <div class="content">
                 <div class="title">Laravel 5</div>
-            </div>
+            </div> --}}
         </div>
+        <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+        <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+        <script>
+            var socket = io('http://angler:3000');
+            socket.on('message', function(msg){
+                $('.container').append(msg+'<br>');
+            });
+        </script>
     </body>
 </html>

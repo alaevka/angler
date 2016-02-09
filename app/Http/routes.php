@@ -44,7 +44,10 @@ $api->version('v1', function ($api) {
     $api->post('signup', 'App\Http\Controllers\Api\V1\AuthController@store');
 });
 
-
-$api->version('v1', ['middleware' => 'jwt.auth'], function ($api) {
-    $api->resource('user', 'App\Http\Controllers\Api\V1\AuthController', ['only' => ['index']]);
+$api->version('v1', function ($api) { //['middleware' => 'jwt.auth']
+    $api->resource('post', 'App\Http\Controllers\Api\V1\PostController');
+    /*
+		refreshing user token
+    */
+    $api->get('refresh', 'App\Http\Controllers\Api\V1\AuthController@refresh');
 });

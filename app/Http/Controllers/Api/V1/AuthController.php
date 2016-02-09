@@ -10,6 +10,15 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
+    public function refresh()
+    {
+        $current_token  = JWTAuth::getToken();
+        $token          = JWTAuth::refresh($current_token);
+
+        return response()->json(compact('token'));
+    }
+
+    
     public function index() {
         return User::all();
     }
@@ -54,7 +63,7 @@ class AuthController extends Controller
 		}
 		//\Log::info('<!> Created : '.$user);
         $token = JWTAuth::fromUser($user);
-		return response()->json($token);
+		return response()->json(['token' => $token]);
 
     }
 }
