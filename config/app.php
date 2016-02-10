@@ -158,6 +158,8 @@ return [
 
         Dingo\Api\Provider\LaravelServiceProvider::class,
         'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
+        Jenssegers\Mongodb\MongodbServiceProvider::class,
+        Collective\Html\HtmlServiceProvider::class,
 
 
     ],
@@ -208,6 +210,8 @@ return [
         'DingApi'   => 'Dingo\Api\Facade\API',
         'JWTAuth'   => 'Tymon\JWTAuth\Facades\JWTAuth',
         'JWTFactory'=> 'Tymon\JWTAuth\Facades\JWTFactory',
+        'Form'      => Collective\Html\FormFacade::class,
+        'Html'      => Collective\Html\HtmlFacade::class,
         
 
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Validator;
 
 class PostController extends Controller {
 
@@ -19,12 +20,21 @@ class PostController extends Controller {
 	public function store(Request $request) {
 
 		$input = $request->all();
-		$post = new Post;
-		$post->user_id = 1;
-        $post->text = $request->text; 
-        $post->save();
 
-        return $this->response->array($post);
+		$validator = Validator::make($input, Post::getCreateRules());
+
+		if ($validator->passes()) {
+			
+			$post = new Post;
+			$post->user_id = $request->user_id;
+	        $post->text = $request->text; 
+	        $post->save();
+
+	        return $this->response->array($post);
+
+	    } else {
+	    	throw new \Dingo\Api\Exception\StoreResourceFailedException('Could not create new user.', $validator->errors());
+	    }
 
 	}
 

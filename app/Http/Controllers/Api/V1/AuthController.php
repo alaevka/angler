@@ -10,12 +10,29 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function refresh()
-    {
-        $current_token  = JWTAuth::getToken();
-        $token          = JWTAuth::refresh($current_token);
+    // public function refresh()
+    // {
+    //     $current_token  = JWTAuth::getToken();
+    //     $token          = JWTAuth::refresh($current_token);
 
-        return response()->json(compact('token'));
+    //     return response()->json(compact('token'));
+    // }
+
+
+    public function token_refresh(){
+
+        $token = JWTAuth::getToken();
+
+        if(!$token){
+            throw new BadRequestHtttpException('Token not provided');
+        }
+        try{
+            $token = JWTAuth::refresh($token);
+        } catch(TokenInvalidException $e){
+            throw new AccessDeniedHttpException('The token is invalid');
+        }
+
+        return $this->response->withArray(['token'=>$token]);
     }
 
     
@@ -61,7 +78,7 @@ class AuthController extends Controller
 		} else {
 			throw new \Dingo\Api\Exception\StoreResourceFailedException('Could not create new user.', $validator->errors());
 		}
-		//\Log::info('<!> Created : '.$user);
+		
         $token = JWTAuth::fromUser($user);
 		return response()->json(['token' => $token]);
 

@@ -2,10 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use Illuminate\Auth\Authenticatable;
 
-class User extends Authenticatable
+class User extends Eloquent implements \Illuminate\Contracts\Auth\Authenticatable
 {
+
+    use Authenticatable;
+
+    protected $collection = 'users';
+    protected $primaryKey = '_id';
     /**
      * The attributes that are mass assignable.
      *
@@ -34,4 +40,6 @@ class User extends Authenticatable
     public static function getCreateRules() {      
         return self::$createRules; 
     }
+
+   
 }
