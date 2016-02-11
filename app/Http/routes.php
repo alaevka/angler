@@ -40,16 +40,20 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
     $api->post('signin', 'App\Http\Controllers\Api\V1\AuthController@authenticate');
+    $api->post('signup', 'App\Http\Controllers\Api\V1\AuthController@store');
+
+    $api->resource('user', 'App\Http\Controllers\Api\V1\UserController');
+    
+});
+$api->version('v1', ['middleware' => 'jwt.auth'], function ($api) {
+    $api->get('refresh', 'App\Http\Controllers\Api\V1\AuthController@token_refresh');
 });
 
-$api->version('v1', function ($api) {
-    $api->post('signup', 'App\Http\Controllers\Api\V1\AuthController@store');
-});
 
 $api->version('v1', ['middleware' => 'jwt.auth'], function ($api) {
     $api->resource('post', 'App\Http\Controllers\Api\V1\PostController');
     /*
 		refreshing user token
     */
-    $api->get('refresh', 'App\Http\Controllers\Api\V1\AuthController@refresh');
+    
 });

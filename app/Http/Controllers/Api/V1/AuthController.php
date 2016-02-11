@@ -7,16 +7,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Dingo\Api\Routing\Helpers;
+
 
 class AuthController extends Controller
 {
-    // public function refresh()
-    // {
-    //     $current_token  = JWTAuth::getToken();
-    //     $token          = JWTAuth::refresh($current_token);
-
-    //     return response()->json(compact('token'));
-    // }
+    use Helpers;
 
 
     public function token_refresh(){
@@ -24,12 +21,19 @@ class AuthController extends Controller
         $token = JWTAuth::getToken();
 
         if(!$token){
-            throw new BadRequestHtttpException('Token not provided');
+            
+            return $this->response->array(['meta' => ['code' => 400, 'message' => 'BadRequestHttpException'], 'data' => ['status' => 'error', 'errors' => ['name' => 'token_not_provided']]]);
+            //throw new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException('Token not provided');
         }
         try{
+
             $token = JWTAuth::refresh($token);
+        
         } catch(TokenInvalidException $e){
-            throw new AccessDeniedHttpException('The token is invalid');
+            
+            //throw new AccessDeniedHttpException('The token is invalid');
+            return $this->response->array(['meta' => ['code' => 403, 'message' => 'AccessDeniedHttpException'], 'data' => ['status' => 'error', 'errors' => ['name' => 'the_token_is_invalid']]]);
+
         }
 
         return $this->response->withArray(['token'=>$token]);
@@ -37,7 +41,9 @@ class AuthController extends Controller
 
     
     public function index() {
+
         return User::all();
+
     }
 
     public function authenticate(Request $request)
@@ -50,15 +56,16 @@ class AuthController extends Controller
             // attempt to verify the credentials and create a token for the user
             if (! $token = JWTAuth::attempt($credentials)) {
 
-                return response()->json(['error' => 'invalid_credentials'], 401);
+                return $this->response->array(['meta' => ['code' => 200, 'message' => 'OK'], 'data' => ['status' => 'error', 'errors' => ['name' => 'invalid_credentials']]]);
+
             }
         } catch (JWTException $e) {
             // something went wrong whilst attempting to encode the token
-            return response()->json(['error' => 'could_not_create_token'], 500);
+            return $this->response->array(['meta' => ['code' => 200, 'message' => 'OK'], 'data' => ['status' => 'error', 'errors' => ['name' => 'could_not_create_token']]]);
         }
 
         // all good so return the token
-        return response()->json(compact('token'));
+        return $this->response->array(['meta' => ['code' => 200, 'message' => 'OK'], 'data' => ['token' => compact('token'), 'user' => Auth::user()]]);
     }
 
     public function store(Request $request) {

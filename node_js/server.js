@@ -24,8 +24,8 @@
 var io = require('socket.io').listen(3000);
 
 var key = 'drone1';
-var lat = 53.2071180000 + (Math.random() / 100);
-var lng = 45.0506670000 + (Math.random() / 100);
+var lat = 53.2009050000 + (Math.random() / 100);
+var lng = 45.0106070000 + (Math.random() / 100);
 var latO = (Math.random() - .5) / 1000;
 var lngO = (Math.random() -.5) / 1000;
 
@@ -36,5 +36,5 @@ setInterval( function() {
         lng += (Math.random() / 1000) + lngO;
         var o = [{"device_uid":key,"points":[[0,lat,lng,10]]}];
         console.log('feed.'+key+' '+JSON.stringify(o));
-        io.emit('message', JSON.stringify(o));
+        io.emit('message', {lat: lat, lon: lng, o: JSON.stringify(o)});
     }, 1000);
